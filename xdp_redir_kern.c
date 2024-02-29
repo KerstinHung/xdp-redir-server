@@ -5,6 +5,8 @@
 #include <linux/icmp.h>
 #include <bpf/bpf_helpers.h>
 
+#define MAX_SERVERS 1
+
 struct matrics;
 
 struct server_info {
@@ -52,6 +54,9 @@ static __always_inline int handle_ipv4(struct xdp_md *ctx)
 
 	off += sizeof(struct icmphdr);
 	icmph = data + off;
+
+	/* TODO*/
+	return XDP_PASS;
 
 }
 
