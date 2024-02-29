@@ -10,7 +10,7 @@ struct matrics;
 struct server_info {
 	__u32 saddr;
 	__u32 daddr;
-	__u8 dmac[6];
+	__u8 dmac[ETH_ALEN];
 };
 
 struct {
@@ -71,8 +71,6 @@ int xdp_redirect_func(struct xdp_md *ctx){
 		return handle_ipv4(xdp);
 	else
 		return XDP_PASS;
-
-	unsigned char dst[ETH_ALEN] = { /* TODO: put your values here */ };
 }
 
 char _license[] SEC("license") = "GPL";
