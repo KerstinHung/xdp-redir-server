@@ -1,9 +1,14 @@
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 #include <linux/bpf.h>
 #include <linux/in.h>
 #include <linux/if_ether.h>
 #include <linux/ip.h>
 #include <linux/icmp.h>
 #include <bpf/bpf_helpers.h>
+#include <linux/atm.h>
 
 #define MAX_SERVERS 1
 
@@ -56,7 +61,7 @@ static __always_inline int handle_ipv4(struct xdp_md *ctx)
 	icmph = data + off;
 
 	/* TODO*/
-	return XDP_PASS;
+	return XDP_DROP;
 
 }
 
