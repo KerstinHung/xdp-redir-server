@@ -22,7 +22,7 @@ struct {
 	.max_elem = MAX_SERVERS,
 }servers SEC("maps");
 
-static __always_inline struct server_info *get_server(struct matrics)
+static __always_inline struct server_info *get_server(struct matrics *mtx)
 {
 	struct server_info *sv;
 	/* TODO*/
@@ -40,7 +40,7 @@ static __always_inline int handle_ipv4(struct xdp_md *ctx)
 {
 	void *data_end = (void *)(long)ctx->data_end;
 	void *data = (void *)(long)ctx->data;
-	struct ethhdr *eth = *data;
+	struct ethhdr *eth = data;
 	struct iphdr *iph;
 	struct icmphdr *icmph;
 
@@ -65,7 +65,7 @@ int xdp_redirect_func(struct xdp_md *ctx){
 	void *data_end = (void *)(long)ctx->data_end;
 	void *data = (void *)(long)ctx->data;
 	struct ethhdr *eth = data;
-	__u16 = h_proto;
+	__u16 h_proto;
 	
 	if (eth + 1 > data_end)
 		return XDP_DROP;
@@ -73,7 +73,7 @@ int xdp_redirect_func(struct xdp_md *ctx){
 	h_proto = eth->h_proto;
 
 	if (h_proto == htons(ETH_P_IP))
-		return handle_ipv4(xdp);
+		return handle_ipv4(ctx);
 	else
 		return XDP_PASS;
 }
