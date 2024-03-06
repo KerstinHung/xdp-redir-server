@@ -20,12 +20,12 @@ struct server_info {
 	__u8 dmac[ETH_ALEN];
 };
 
-struct bpf_map_def SEC("maps") servers = {
-	.type = BPF_MAP_TYPE_HASH,
-	.key_size = sizeof(__u32),
-	.value_size = sizeof(struct server_info),
-	.max_entries = MAX_SERVERS,
-};
+struct {
+	__uint(type, BPF_MAP_TYPE_HASH);
+	__type(key, __u32);
+	__type(value, struct server_info);
+	__uint(max_entries, MAX_SERVERS);
+}servers SEC(".maps");
 
 static __always_inline struct server_info *get_server(struct matrics *mtx)
 {
