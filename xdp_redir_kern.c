@@ -49,11 +49,14 @@ static __always_inline int handle_ipv4(struct xdp_md *ctx)
 	struct iphdr *iph;
 	struct icmphdr *icmph;
 
-	__u64 off = 0;
+	__u32 off = 0;
 
 	off += sizeof(struct ethhdr);
 	iph = data + off;
 	
+	if (iph + 1 > data_end)
+        return XDP_DROP;
+
 	if(iph->protocol != IPPROTO_ICMP)
 		return XDP_PASS;
 
