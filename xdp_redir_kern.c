@@ -12,32 +12,39 @@
 
 #define MAX_SERVERS 1
 
-struct matrics;
-
 struct server_info {
 	__u32 saddr;
-	__u32 daddr;
 	__u8 dmac[ETH_ALEN];
 };
 
 struct {
-	__uint(type, BPF_MAP_TYPE_HASH);
+	__uint(type, BPF_MAP_TYPE_ARRAY);
 	__type(key, __u32);
 	__type(value, struct server_info);
 	__uint(max_entries, MAX_SERVERS);
 }servers SEC(".maps");
 
-static __always_inline struct server_info *get_server(struct matrics *mtx)
+static __always_inline struct server_info *get_server()
 {
 	struct server_info *sv;
-	/* TODO*/
+	__u32 key = 0;
+	sv = bpf_map_lookup_elem(&servers, &key);
 	return sv;
 }
 
 static __always_inline __u16 ip_checksum(unsigned short *buf, int bufsz)
 {
 	unsigned long sum = 0;
-	/* TODO*/
+	while(bufsz > 1){
+		sum += *buf;
+		buf++;
+		bufsz -= 2;
+	}
+	if(bufsz == 1){
+		sum += *(unsigned char *)buf;
+	}
+	sum = (sum & 0xffff) + (sum >> 16);
+    sum = (sum & 0xffff) + (sum >> 16);
 	return ~sum;
 }	
 
@@ -47,25 +54,29 @@ static __always_inline int handle_ipv4(struct xdp_md *ctx)
 	void *data = (void *)(long)ctx->data;
 	struct ethhdr *eth = data;
 	struct iphdr *iph;
-	struct icmphdr *icmph;
+	struct server_info *sv;
 
 	__u32 off = 0;
 
 	off += sizeof(struct ethhdr);
 	iph = data + off;
-	
 	if (iph + 1 > data_end)
         return XDP_DROP;
-
+	
 	if(iph->protocol != IPPROTO_ICMP)
 		return XDP_PASS;
 
-	off += sizeof(struct icmphdr);
-	icmph = data + off;
+	sv = get_server();
+	if(!sv)
+		return XDP_ABORTED;
 
-	/* TODO*/
-	return XDP_DROP;
+	iph->daddr = sv->saddr;
+	memcpy(eth->h_dest, sv->dmac, sizeof(eth->h_dest));
 
+	iph->check = 0;
+	iph->check = ip_checksum((__u16 *)iph, sizeof(struct iphdr));
+
+	return XDP_TX;
 }
 
 SEC("xdp")
