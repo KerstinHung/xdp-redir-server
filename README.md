@@ -30,6 +30,10 @@ $ ./configure
 $ make
 ```
 # Loading XDP Program
+Compile the kernel space file:
+```
+$ make
+```
 Add the executable of xdp-loader to your path:
 ```
 $ cd xdp-tools/xdp-loader/
@@ -38,4 +42,8 @@ $ sudo cp xdp-loader /usr/local/bin
 Now you can load xdp programs using xdp-loader, for example:
 ```
 $ sudo xdp-loader load -m skb lo xdp_redir_kern.o 
+```
+After loading your xdp program into the kernel, you can remove the object file:
+```
+$ make clean
 ```
