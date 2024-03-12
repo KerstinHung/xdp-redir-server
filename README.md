@@ -1,1 +1,4 @@
-This project is in progress.
+This repository uses libxdp as git-submodules
+```
+git submodule update --init
+```
