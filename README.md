@@ -1,7 +1,5 @@
 # Dependencies
-===
 ## Git Submodules
---- 
 This repository uses both [libbpf](https://github.com/libbpf/libbpf/) [libxdp](https://github.com/xdp-project/xdp-tools/) as git-submodules
 ```
 git submodule update --init
