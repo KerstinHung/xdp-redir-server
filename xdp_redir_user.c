@@ -24,5 +24,5 @@ int main(int argc, char *argv[])
     }
 
     /* load XDP object by libxdp */
-    prog = xdp_program__open_file("xdp_redir_kern.o", "xdp_redir_kern", NULL);
+    prog = xdp_program__open_file("xdp_redir_kern.o", "xdp_redir", NULL);
 }

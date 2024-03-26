@@ -79,7 +79,7 @@ static __always_inline int handle_ipv4(struct xdp_md *ctx)
 	return XDP_TX;
 }
 
-SEC("xdp")
+SEC("xdp_redir")
 int xdp_redirect_func(struct xdp_md *ctx){
 	void *data_end = (void *)(long)ctx->data_end;
 	void *data = (void *)(long)ctx->data;
